@@ -64,8 +64,8 @@ const seedData = async () => {
                 videoUrl: "https://www.youtube.com/watch?v=Zi-Q0t4gMC8",
                 thumbnailUrl: "https://img.youtube.com/vi/Zi-Q0t4gMC8/maxresdefault.jpg",
                 category: "Education",
-                channel: channel.channelId,
-                uploadedBy: user.userId,
+                channelId: channel.channelId,
+                uploader: user.userId,
                 views: 714019,
                 likes: 7800,
                 dislikes: 100
