@@ -13,6 +13,7 @@ export const createVideo = async (req, res) => {
             thumbnailUrl,
             videoUrl,
             description,
+            category,
             channelId,
             uploader,
             uploadDate
@@ -25,6 +26,7 @@ export const createVideo = async (req, res) => {
             thumbnailUrl,
             videoUrl,
             description,
+            category,
             channelId,
             uploader,
             uploadDate
