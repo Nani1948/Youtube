@@ -9,9 +9,7 @@ The application allows users to register, log in, create channels, upload videos
 
 ## Project Overview
 This project is a YouTube-like video-sharing platform built as a MERN Stack capstone project.
-
 The application contains:
-
 * User authentication
 * JWT-based authorization
 * Home page
@@ -126,7 +124,7 @@ youtube
     ├── .env
     ├── package.json
     └── server.js
-`
+
 
 # Features
 ## 1. User Registration
@@ -318,7 +316,6 @@ Responsive CSS is used for:
 * Channel pages
 * Comment section
 
----
 
 # Database
 
@@ -326,48 +323,39 @@ MongoDB is used as the database.
 
 The application contains the following collections:
 
-```text
 users
 channels
 videos
 comments
-```
 
----
 
 # Database Relationships
 
 ## User → Channel
 
 A user can own a channel.
-
-```text
 User
   ↓
 Channel
-```
 
 ## Channel → Video
 
 A channel can contain multiple videos.
 
-```text
+
 Channel
   ↓
 Videos
-```
+
 
 ## Video → Comments
 
 A video can contain multiple comments.
 
-```text
 Video
   ↓
 Comments
-```
 
----
 
 # Seed Data
 
@@ -380,19 +368,12 @@ Users
 Channels
 Videos
 Comments
-```
 
 This allows the application to be tested immediately without manually creating all records.
-
 Run the seed script from the backend directory:
-
-```bash
 node seed/seedData.js
-```
-
 Make sure MongoDB is running before executing the seed script.
 
----
 
 # Environment Variables
 
@@ -401,72 +382,53 @@ Make sure MongoDB is running before executing the seed script.
 Create a `.env` file inside the `backend` folder.
 
 Example:
-
-```env
 PORT=5000
 MONGO_URI=mongodb://127.0.0.1:27017/youtube_clone
 JWT_SECRET=your_secret_key
-```
 
-Do not upload the real `.env` file to GitHub.
-
----
 
 ## Frontend
-
 Create a `.env` file inside the `frontend` folder.
 
 Example:
 
-```env
 VITE_API_URL=http://localhost:5000/api
-```
 
----
 
 # Installation
 
 ## Step 1: Clone the Repository
 
-```bash
+
 git clone <your-github-repository-url>
-```
 
 Move into the project directory:
 
-```bash
 cd youtube-clone
-```
 
----
 
 # Backend Setup
 
 Open the backend folder:
 
-```bash
 cd backend
-```
+
 
 Install dependencies:
 
-```bash
 npm install
-```
+
 
 Start the backend server:
 
-```bash
+
 npm run dev
-```
 
 The backend runs on:
 
-```text
-http://localhost:5000
-```
 
----
+http://localhost:5000
+
 
 # Frontend Setup
 
@@ -474,183 +436,131 @@ Open another terminal.
 
 Move into the frontend folder:
 
-```bash
+
 cd frontend
-```
+
 
 Install dependencies:
-
-```bash
 npm install
-```
+
 
 Start the Vite development server:
-
-```bash
 npm run dev
-```
+
 
 The frontend will normally run on:
-
-```text
 http://localhost:5173
-```
 
 Open the displayed Vite URL in the browser.
 
----
 
 # API Endpoints
 
 ## Authentication
 
 ### Register
-
-```http
 POST /api/auth/register
-```
+
 
 ### Login
-
-```http
 POST /api/auth/login
-```
 
----
 
 # Video APIs
 
 ### Get all videos
 
-```http
 GET /api/videos
-```
 
 ### Get video by ID
 
-```http
+
 GET /api/videos/:id
-```
 
 ### Create video
 
-```http
 POST /api/videos
-```
 
 Requires authentication.
 
 ### Update video
 
-```http
 PUT /api/videos/:id
-```
 
 Requires authentication.
 
 ### Delete video
-
-```http
 DELETE /api/videos/:id
-```
+
 
 Requires authentication.
-
----
 
 # Like APIs
 
 ### Like video
 
-```http
 POST /api/videos/:id/like
-```
+
 
 Requires authentication.
 
 ### Remove Like
 
-```http
 POST /api/videos/:id/remove-like
-```
 
 Requires authentication.
-
----
 
 # Dislike APIs
 
 ### Dislike video
 
-```http
 POST /api/videos/:id/dislike
-```
 
 Requires authentication.
 
 ### Remove Dislike
 
-```http
+
 POST /api/videos/:id/remove-dislike
-```
 
 Requires authentication.
 
----
 
 # Comment APIs
 
 ### Get comments
 
-```http
 GET /api/comments
-```
 
 ### Get comment by ID
 
-```http
+`
 GET /api/comments/:id
-```
+
 
 ### Create comment
-
-```http
 POST /api/comments
-```
 
 Requires authentication.
 
 ### Update comment
-
-```http
 PUT /api/comments/:id
-```
-
 Requires authentication.
 
 ### Delete comment
-
-```http
 DELETE /api/comments/:id
-```
-
 Requires authentication.
 
----
 
 # Channel APIs
 
 ### Get channels
 
-```http
 GET /api/channels
-```
 
 ### Get channel by ID
-
-```http
 GET /api/channels/:id
-```
+
 
 ### Create channel
 POST /api/channels
@@ -804,5 +714,7 @@ It integrates:
 * Search and filtering
 * Responsive design
 The project provides an end-to-end video-sharing application with authentication, channels, videos, comments, and user interactions.
+
 Github:https://github.com/Nani1948/Youtube.git
+
 Author:Nandhini
