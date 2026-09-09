@@ -7,7 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import channelRoutes from "./routes/channelRoutes.js";
 import videoRoutes from "./routes/videoRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
-
+import  errorMiddleware from "./middleware/errorMiddleware.js";
 //Load environment variables
 dotenv.config();
 
@@ -34,7 +34,9 @@ app.get("/",(req,res) =>{
         message:"Youtube Clone API is running"
     });
 });
-
+// Global error-handling middleware.
+// This must be placed after all routes.
+app.use(errorMiddleware);
 //Get port form .env
  const PORT=process.env.PORT || 5000;
 
