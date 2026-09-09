@@ -39,7 +39,16 @@ const videoSchema = new mongoose.Schema({
     category: {
         type: String,
         required: [true, "Video category is required"],
-        trim: true
+        trim: true,
+        enum: [
+            "Education",
+            "Technology",
+            "Gaming",
+            "Music",
+            "Sports",
+            "News"
+
+        ]
     },
     //Channel ID
     channelId: {
@@ -56,21 +65,36 @@ const videoSchema = new mongoose.Schema({
     //View video
     views: {
         type: Number,
-        default: 0
+        default: 0,
+        min: 0
     },
     //Like video
     likes: {
         type: Number,
-        default: 0
+        default: 0,
+        min: 0
     },
     //Dislike video
     dislikes: {
         type: Number,
-        default: 0
+        default: 0,
+        min: 0
     },
+     likedBy: [
+        {
+            type: String
+        }
+    ],
+
+    dislikedBy: [
+        {
+            type: String
+        }
+    ],
     //Upload date
     uploadDate: {
         type: Date,
+        default: Date.now,
         required: [true, "Upload date is required"]
     },
 
