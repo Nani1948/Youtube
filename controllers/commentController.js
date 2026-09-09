@@ -4,23 +4,42 @@ import Video from "../models/Video.js";
 // Create Comment
 export const createComment = async (req, res) => {
     try {
-            // Count existing comments
-        const count = await Comment.countDocuments();
-
-        // Generate comment ID automatically
-        const commentId = `comment${String(count + 1).padStart(3, "0")}`;
 
 
         // Get comment details from request body
-       const {
+        const {
             videoId,
-            userId,
             text,
             timestamp,
             isPinned
         } = req.body;
 
+        // Check whether the video exists. 
+        const video = await Video.findOne({
+            videoId: videoId 
+        }); 
+        // Stop if the video does not exist.
+         if (!video) { 
+          return res.status(404).json(
+         { message: "Video not found" });
+         }
+          // Get the last comment. 
+        const lastComment = await Comment.findOne() 
+        .sort({ commentId: -1 }); 
+        // Start the comment number from 1.
+         let nextNumber = 1; 
+         // Check whether an existing comment was found.
+         if (lastComment) {
+         // Remove "comment" and convert the number to an integer.
+          const lastNumber = parseInt( 
+            lastComment.commentId.replace("comment", ""), 10 );
+
+          //Increase the number by 1. 
+          nextNumber = lastNumber + 1; } 
+        // Generate the next comment ID. 
+        const commentId = `comment${String(nextNumber).padStart(3, "0")}`;
         // Create and save comment in MongoDB
+        const userId = req.user.userId;
         const comment = await Comment.create({
             commentId,
             videoId,
@@ -31,7 +50,7 @@ export const createComment = async (req, res) => {
         });
 
         // Add comment to the video's comments array
-        const video = await Video.findOneAndUpdate(
+          await Video.findOneAndUpdate(
             // Find video using videoId
             { videoId: videoId },
             // Add comment reference to comments array
@@ -40,15 +59,7 @@ export const createComment = async (req, res) => {
             { new: true }
         );
 
-        // Check whether video exists
-        if (!video) {
-            // Remove comment if video does not exist
-            await Comment.findByIdAndDelete(comment._id);
-            // Send error response
-            return res.status(404).json({
-                message: "Video not found"
-            });
-        }
+        
         // Send successful response
         res.status(201).json({
             message: "Comment created successfully",
@@ -117,15 +128,12 @@ export const getCommentById = async (req, res) => {
 // Update Comment
 export const updateComment = async (req, res) => {
     try {
-        const comment = await Comment.findOneAndUpdate(
-            { commentId: req.params.id },       // Find comment
-            req.body,     // New data to update
-            {
-                // Return updated comment
-                new: true,
-                // Apply schema validation
-                runValidators: true
-            }
+
+
+
+        // Find comment
+        const comment = await Comment.findOne(
+            { commentId: req.params.id }
         );
 
         // Check whether comment exists
@@ -134,6 +142,17 @@ export const updateComment = async (req, res) => {
                 message: "Comment not found"
             });
         }
+        // Check comment owner
+        if (String(comment.userId) !== String(req.user.userId)) {
+            return res.status(403).json({
+                message: "You can update only your own comment"
+            });
+        }
+        // Update comment text
+        comment.text = req.body.text;
+
+        // Save updated comment
+        await comment.save();
         // Send updated comment
         res.status(200).json({
             message: "Comment updated successfully",
@@ -157,7 +176,7 @@ export const deleteComment = async (req, res) => {
         // Find comment using commentId
         // Delete comment from MongoDB
 
-        const comment = await Comment.findOneAndDelete({
+        const comment = await Comment.findOne({
             commentId: req.params.id
         });
 
@@ -168,6 +187,15 @@ export const deleteComment = async (req, res) => {
                 message: "Comment not found"
             });
         }
+        // Check comment owner
+        if (String(comment.userId) !== String(req.user.userId)) {
+            return res.status(403).json({
+                message: "You can delete only your own comment"
+            });
+        }
+
+        // Delete comment from MongoDB
+        await Comment.findByIdAndDelete(comment._id);
 
         // Remove comment reference from Video
         await Video.updateMany(

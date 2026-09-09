@@ -2,11 +2,28 @@ import Channel from "../models/Channel.js";
 // Create Channel
 export const createChannel = async (req, res) => {
     try {
-        // Count existing channels
-        const count = await Channel.countDocuments();
+        // Find the channel with the highest existing channelId.
+        const lastChannel = await Channel.findOne()
+            .sort({ channelId: -1 });
 
-        // Generate sequential channel ID
-        const channelId = `channelID${String(count + 1).padStart(3, "0")}`;
+        // Start channel numbering from 1.
+        let nextNumber = 1;
+
+        // Check whether any channel already exists.
+        if (lastChannel) {
+
+            // Extract the number from the existing channelId.
+            const lastNumber = parseInt(
+                lastChannel.channelId.replace(/\D/g, ""),
+                10
+            );
+
+            // Generate the next channel number.
+            nextNumber = lastNumber + 1;
+        }
+
+        // Generate the next unique channel ID.
+        const channelId = `channel${String(nextNumber).padStart(2, "0")}`;
 
         // Get channel details from request body
         const {
@@ -100,25 +117,39 @@ export const updateChannel = async (req, res) => {
             });
         }
         // Check whether logged-in user is the owner
-        if (channel.owner !== req.user.userId) {
+        if (String(channel.owner) !== String(req.user.userId)) {
             return res.status(403).json({
                 message: "You can update only your own channel"
             });
         }
 
-        // Update channel with request body data
-        const updatedChannel = await Channel.findOneAndUpdate(
-            { channelId: req.params.id },
-            req.body,
-            {
-                new: true,
-                runValidators: true
-            }
-        );
+        // Get only the fields that can be updated.
+        const {
+            channelName,
+            description,
+            channelBanner
+        } = req.body;
+
+        
+        // Update only the fields that were provided.
+        if (channelName !== undefined) {
+            channel.channelName = channelName;
+        }
+
+        if (description !== undefined) {
+            channel.description = description;
+        }
+
+        if (channelBanner !== undefined) {
+            channel.channelBanner = channelBanner;
+        }
+        // Save updated channel.
+        await channel.save();
+
         // Send updated channel
         res.status(200).json({
             message: "Channel updated successfully",
-            channel: updatedChannel
+            channel: channel
         });
         // Send error response
     } catch (error) {
@@ -147,7 +178,7 @@ export const deleteChannel = async (req, res) => {
             });
         }
         // Check whether logged-in user is the owner
-        if (channel.owner !== req.user.userId) {
+        if (String(channel.owner) !== String(req.user.userId)) {
             return res.status(403).json({
                 message: "You can delete only your own channel"
             });

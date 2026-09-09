@@ -27,7 +27,7 @@ export const getUserById = async (req, res) => {
     try {
 
         // Find user using the userId from URL
-        // Example: /users/user001
+    
         const user = await User.findOne({
             userId: req.params.id
         }).select("-password");
@@ -59,10 +59,32 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
     try {
         // Find user using userId
+             // Check whether the logged-in user owns this account.
+        if (String(req.user.userId) !== String(req.params.id)) {
+            return res.status(403).json({
+                message: "You can only update your own account"
+            });
+        }
+
+        // Allow only safe user fields to be updated.
+        const updateData = {};
+
+        if (req.body.username !== undefined) {
+            updateData.username = req.body.username;
+        }
+
+        if (req.body.email !== undefined) {
+            updateData.email = req.body.email;
+        }
+
+        if (req.body.avatar !== undefined) {
+            updateData.avatar = req.body.avatar;
+        }
+
         // Update the fields received in req.body
         const user = await User.findOneAndUpdate(
             { userId: req.params.id },
-            req.body,
+            updateData,
             {
                 // Return the updated user
 
@@ -100,7 +122,12 @@ export const deleteUser = async (req, res) => {
     try {
         // Find user using userId
         // Delete the user from MongoDB
-
+          // Check whether the logged-in user owns this account.
+        if (String(req.user.userId) !== String(req.params.id)) {
+            return res.status(403).json({
+                message: "You can only delete your own account"
+            });
+        }
         const user = await User.findOneAndDelete({
             userId: req.params.id
         });
